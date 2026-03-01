@@ -4,6 +4,7 @@ import { FileUpload } from './components/FileUpload'
 import { SummaryCards } from './components/Summary'
 import { TabPanel } from './components/Dashboard'
 import { MemoryPieChart, TopFunctionsChart, ModuleTreemap, ModuleBarChart } from './components/Charts'
+import { SymbolTable } from './components/SymbolTable'
 import { parseGccMapFile } from './parser/gccMapParser'
 
 function App() {
@@ -100,6 +101,11 @@ function App() {
                 }
               ]}
             />
+
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-semibold mb-4">符号详细列表</h2>
+              <SymbolTable symbols={mapData.symbols} />
+            </div>
           </div>
         )}
       </main>

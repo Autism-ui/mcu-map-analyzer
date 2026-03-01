@@ -53,7 +53,13 @@ npm run preview
 
 ## 部署
 
-### Vercel
+本项目已配置好部署文件，可以一键部署到以下平台：
+
+### Vercel（推荐）
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
+
+或使用命令行：
 
 ```bash
 npm install -g vercel
@@ -62,10 +68,20 @@ vercel
 
 ### Netlify
 
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start)
+
+或使用命令行：
+
 ```bash
 npm run build
 # 将 dist 目录部署到 Netlify
 ```
+
+### 手动部署
+
+1. 运行 `npm run build` 构建项目
+2. 将 `dist` 目录部署到任何静态网站托管服务
+3. 确保配置 SPA 路由重定向到 `index.html`
 
 ## 许可证
 

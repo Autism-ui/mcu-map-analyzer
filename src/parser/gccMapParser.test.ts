@@ -13,8 +13,8 @@ RAM              0x20000000         0x00020000         xrw
 `
     const result = parseGccMapFile(mapContent)
     expect(result.memoryRegions).toHaveLength(2)
-    expect(result.memoryRegions[0].name).toBe('FLASH')
-    expect(result.memoryRegions[0].origin).toBe(0x08000000)
+    expect(result.memoryRegions[0]?.name).toBe('FLASH')
+    expect(result.memoryRegions[0]?.origin).toBe(0x08000000)
   })
 
   it('should parse symbols from linker map', () => {

@@ -40,7 +40,7 @@ function parseMemoryConfiguration(lines: string[]): MemoryRegion[] {
 
       const match = line.match(/^\s*(\S+)\s+0x([0-9a-f]+)\s+0x([0-9a-f]+)/)
 
-      if (match) {
+      if (match && match[1] && match[2] && match[3]) {
         if (match[1] === 'Name') {
           foundHeader = true
           continue
@@ -68,17 +68,18 @@ function parseSymbols(lines: string[]): Symbol[] {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
+    if (!line) continue
 
     // 检测段开始
     const sectionMatch = line.match(/^\.(\w+)\s+0x([0-9a-f]+)\s+0x([0-9a-f]+)/)
-    if (sectionMatch) {
+    if (sectionMatch && sectionMatch[1]) {
       currentSection = '.' + sectionMatch[1]
       continue
     }
 
     // 解析符号
     const symbolMatch = line.match(/^\s+0x([0-9a-f]+)\s+(\S+)/)
-    if (symbolMatch && currentSection) {
+    if (symbolMatch && symbolMatch[1] && symbolMatch[2] && currentSection) {
       const address = parseInt(symbolMatch[1], 16)
       const name = symbolMatch[2]
 
@@ -87,14 +88,14 @@ function parseSymbols(lines: string[]): Symbol[] {
       let size = 0
       if (nextLine) {
         const sizeMatch = nextLine.match(/0x([0-9a-f]+)\s+0x([0-9a-f]+)/)
-        if (sizeMatch) {
+        if (sizeMatch && sizeMatch[2]) {
           size = parseInt(sizeMatch[2], 16)
         }
       }
 
       // 提取文件名
       const fileMatch = line.match(/(\S+\.o)$/)
-      const file = fileMatch ? fileMatch[1] : 'unknown'
+      const file = fileMatch && fileMatch[1] ? fileMatch[1] : 'unknown'
 
       symbols.push({
         name,

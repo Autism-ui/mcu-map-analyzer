@@ -3,7 +3,7 @@ import type { ParsedMapData } from './types'
 import { FileUpload } from './components/FileUpload'
 import { SummaryCards } from './components/Summary'
 import { TabPanel } from './components/Dashboard'
-import { MemoryPieChart } from './components/Charts'
+import { MemoryPieChart, TopFunctionsChart } from './components/Charts'
 import { parseGccMapFile } from './parser/gccMapParser'
 
 function App() {
@@ -86,7 +86,7 @@ function App() {
                 {
                   id: 'functions',
                   label: '函数分析',
-                  content: <div>函数分析（待实现）</div>
+                  content: <TopFunctionsChart data={mapData} />
                 },
                 {
                   id: 'optimization',

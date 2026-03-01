@@ -6,6 +6,7 @@ import { TabPanel } from './components/Dashboard'
 import { MemoryPieChart, TopFunctionsChart, ModuleTreemap, ModuleBarChart } from './components/Charts'
 import { SymbolTable } from './components/SymbolTable'
 import { parseGccMapFile } from './parser/gccMapParser'
+import { exportToJSON, exportToCSV } from './utils/export'
 
 function App() {
   const [mapData, setMapData] = useState<ParsedMapData | null>(null)
@@ -43,12 +44,26 @@ function App() {
             </p>
           </div>
           {mapData && (
-            <button
-              onClick={handleReset}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-            >
-              重新上传
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => exportToJSON(mapData, fileName)}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                导出 JSON
+              </button>
+              <button
+                onClick={() => exportToCSV(mapData, fileName)}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                导出 CSV
+              </button>
+              <button
+                onClick={handleReset}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+              >
+                重新上传
+              </button>
+            </div>
           )}
         </div>
       </header>

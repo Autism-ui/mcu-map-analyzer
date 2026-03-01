@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { ParsedMapData } from './types'
 import { FileUpload } from './components/FileUpload'
 import { SummaryCards } from './components/Summary'
+import { TabPanel } from './components/Dashboard'
+import { MemoryPieChart } from './components/Charts'
 import { parseGccMapFile } from './parser/gccMapParser'
 
 function App() {
@@ -68,6 +70,31 @@ function App() {
             </div>
 
             <SummaryCards data={mapData} />
+
+            <TabPanel
+              tabs={[
+                {
+                  id: 'memory',
+                  label: '内存概览',
+                  content: <MemoryPieChart data={mapData} />
+                },
+                {
+                  id: 'modules',
+                  label: '模块分析',
+                  content: <div>模块分析（待实现）</div>
+                },
+                {
+                  id: 'functions',
+                  label: '函数分析',
+                  content: <div>函数分析（待实现）</div>
+                },
+                {
+                  id: 'optimization',
+                  label: '优化建议',
+                  content: <div>优化建议（待实现）</div>
+                }
+              ]}
+            />
           </div>
         )}
       </main>

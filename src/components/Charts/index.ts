@@ -1,0 +1,1 @@
+export { MemoryPieChart } from './MemoryPieChart'

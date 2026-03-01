@@ -2,11 +2,17 @@ import type { ParsedMapData, MemoryRegion, Symbol, Module } from '../types'
 
 export function parseGccMapFile(content: string): ParsedMapData {
   const lines = content.split('\n')
+  const memoryRegions = parseMemoryConfiguration(lines)
+  const symbols = parseSymbols(lines)
+  const modules = parseModules(symbols)
+
+  // 计算内存区域的实际使用量
+  updateMemoryUsage(memoryRegions, symbols)
 
   return {
-    memoryRegions: parseMemoryConfiguration(lines),
-    symbols: parseSymbols(lines),
-    modules: parseModules(lines)
+    memoryRegions,
+    symbols,
+    modules
   }
 }
 
@@ -103,12 +109,27 @@ function parseSymbols(lines: string[]): Symbol[] {
   return symbols
 }
 
-function parseModules(lines: string[]): Module[] {
+function updateMemoryUsage(regions: MemoryRegion[], symbols: Symbol[]) {
+  for (const region of regions) {
+    let used = 0
+
+    for (const symbol of symbols) {
+      // 检查符号是否在该内存区域内
+      if (symbol.address >= region.origin &&
+          symbol.address < region.origin + region.length) {
+        used += symbol.size
+      }
+    }
+
+    region.used = used
+    region.free = region.length - used
+  }
+}
+
+function parseModules(symbols: Symbol[]): Module[] {
   const moduleMap = new Map<string, Module>()
 
   // 从符号中聚合模块信息
-  const symbols = parseSymbols(lines)
-
   for (const symbol of symbols) {
     if (!moduleMap.has(symbol.file)) {
       moduleMap.set(symbol.file, {

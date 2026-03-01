@@ -3,7 +3,7 @@ import type { ParsedMapData } from './types'
 import { FileUpload } from './components/FileUpload'
 import { SummaryCards } from './components/Summary'
 import { TabPanel } from './components/Dashboard'
-import { MemoryPieChart, TopFunctionsChart } from './components/Charts'
+import { MemoryPieChart, TopFunctionsChart, ModuleTreemap, ModuleBarChart } from './components/Charts'
 import { parseGccMapFile } from './parser/gccMapParser'
 
 function App() {
@@ -81,7 +81,12 @@ function App() {
                 {
                   id: 'modules',
                   label: '模块分析',
-                  content: <div>模块分析（待实现）</div>
+                  content: (
+                    <div className="space-y-6">
+                      <ModuleTreemap data={mapData} />
+                      <ModuleBarChart data={mapData} />
+                    </div>
+                  )
                 },
                 {
                   id: 'functions',

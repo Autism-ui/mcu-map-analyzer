@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ParsedMapData } from './types'
 import { FileUpload } from './components/FileUpload'
+import { SummaryCards } from './components/Summary'
 import { parseGccMapFile } from './parser/gccMapParser'
 
 function App() {
@@ -65,6 +66,8 @@ function App() {
                 已加载文件: <span className="font-medium">{fileName}</span>
               </p>
             </div>
+
+            <SummaryCards data={mapData} />
           </div>
         )}
       </main>

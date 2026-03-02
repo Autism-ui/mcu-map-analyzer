@@ -38,3 +38,6 @@ lerna-debug.log*
 
 # 其他
 .cache
+
+# Worktrees
+.worktrees

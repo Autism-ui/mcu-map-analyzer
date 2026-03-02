@@ -1,6 +1,7 @@
 import ReactECharts from 'echarts-for-react'
 import type { ParsedMapData } from '../../types'
 import { formatBytes } from '../../utils/formatters'
+import { darkTechTheme } from '../../utils/chartTheme'
 
 interface TopFunctionsChartProps {
   data: ParsedMapData
@@ -14,18 +15,24 @@ export function TopFunctionsChart({ data, limit = 20 }: TopFunctionsChartProps) 
     .slice(0, limit)
 
   const option = {
+    ...darkTechTheme,
     title: {
-      text: `Top ${limit} 最大函数`,
+      ...darkTechTheme.title,
+      text: `TOP_${limit}_FUNCTIONS`,
       left: 'center'
     },
     tooltip: {
+      ...darkTechTheme.tooltip,
       trigger: 'axis',
       axisPointer: {
-        type: 'shadow'
+        type: 'shadow',
+        shadowStyle: {
+          color: 'rgba(0, 255, 136, 0.1)'
+        }
       },
       formatter: (params: any) => {
         const data = params[0]
-        return `${data.name}<br/>大小: ${formatBytes(data.value)}`
+        return `${data.name}<br/>SIZE: ${formatBytes(data.value)}`
       }
     },
     grid: {
@@ -37,7 +44,19 @@ export function TopFunctionsChart({ data, limit = 20 }: TopFunctionsChartProps) 
     xAxis: {
       type: 'value',
       axisLabel: {
-        formatter: (value: number) => formatBytes(value)
+        formatter: (value: number) => formatBytes(value),
+        color: '#6b7280',
+        fontFamily: 'JetBrains Mono, monospace'
+      },
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(0, 255, 136, 0.2)'
+        }
+      },
+      splitLine: {
+        lineStyle: {
+          color: 'rgba(0, 255, 136, 0.05)'
+        }
       }
     },
     yAxis: {
@@ -46,22 +65,50 @@ export function TopFunctionsChart({ data, limit = 20 }: TopFunctionsChartProps) 
       axisLabel: {
         interval: 0,
         rotate: 0,
+        color: '#9ca3af',
+        fontFamily: 'JetBrains Mono, monospace',
         formatter: (value: string) => {
           return value.length > 30 ? value.substring(0, 27) + '...' : value
+        }
+      },
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(0, 255, 136, 0.2)'
         }
       }
     },
     series: [
       {
-        name: '函数大小',
+        name: 'Function Size',
         type: 'bar',
         data: topFunctions.map(f => f.size).reverse(),
         itemStyle: {
-          color: '#3b82f6'
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 0,
+            colorStops: [
+              { offset: 0, color: '#00ff88' },
+              { offset: 1, color: '#ffb020' }
+            ]
+          },
+          borderRadius: [0, 4, 4, 0]
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 20,
+            shadowColor: 'rgba(0, 255, 136, 0.5)'
+          }
         }
       }
     ]
   }
 
-  return <ReactECharts option={option} style={{ height: '600px' }} />
+  return (
+    <div className="bg-dark-900/30 rounded-lg p-4 border border-tech-border">
+      <ReactECharts option={option} style={{ height: '600px' }} />
+    </div>
+  )
 }

@@ -11,16 +11,26 @@ type SortOrder = 'asc' | 'desc'
 
 export function SymbolTable({ symbols }: SymbolTableProps) {
   const [searchTerm, setSearchTerm] = useState('')
+  const [sectionFilter, setSectionFilter] = useState<string>('all')
   const [sortField, setSortField] = useState<SortField>('size')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 50
 
+  // 收集所有可用的 section 值，用于筛选下拉框
+  const availableSections = useMemo(() => {
+    const sections = new Set(symbols.map(s => s.section))
+    return Array.from(sections).sort()
+  }, [symbols])
+
   const filteredAndSortedSymbols = useMemo(() => {
-    let result = symbols.filter(symbol =>
-      symbol.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      symbol.file.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    let result = symbols.filter(symbol => {
+      const matchesSearch =
+        symbol.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        symbol.file.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesSection = sectionFilter === 'all' || symbol.section === sectionFilter
+      return matchesSearch && matchesSection
+    })
 
     result.sort((a, b) => {
       let comparison = 0
@@ -45,7 +55,7 @@ export function SymbolTable({ symbols }: SymbolTableProps) {
     })
 
     return result
-  }, [symbols, searchTerm, sortField, sortOrder])
+  }, [symbols, searchTerm, sectionFilter, sortField, sortOrder])
 
   const totalPages = Math.ceil(filteredAndSortedSymbols.length / itemsPerPage)
   const paginatedSymbols = filteredAndSortedSymbols.slice(
@@ -64,8 +74,8 @@ export function SymbolTable({ symbols }: SymbolTableProps) {
 
   return (
     <div className="space-y-6">
-      {/* Search bar */}
-      <div className="flex justify-between items-center">
+      {/* Search bar & section filter */}
+      <div className="flex justify-between items-center gap-4">
         <div className="relative flex-1 max-w-md">
           <input
             type="text"
@@ -83,7 +93,31 @@ export function SymbolTable({ symbols }: SymbolTableProps) {
             </svg>
           </div>
         </div>
-        <span className="text-sm font-mono text-gray-500">
+
+        {/* Section 筛选 */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono text-gray-500 uppercase">Section:</span>
+          <select
+            value={sectionFilter}
+            onChange={(e) => {
+              setSectionFilter(e.target.value)
+              setCurrentPage(1)
+            }}
+            className="px-3 py-3 bg-dark-700 border border-tech-border rounded font-mono text-sm text-gray-300 focus:outline-none focus:border-neon-cyan transition-all duration-300 cursor-pointer appearance-none pr-8"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300f5ff' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'right 8px center'
+            }}
+          >
+            <option value="all">ALL</option>
+            {availableSections.map(section => (
+              <option key={section} value={section}>{section}</option>
+            ))}
+          </select>
+        </div>
+
+        <span className="text-sm font-mono text-gray-500 whitespace-nowrap">
           TOTAL: <span className="text-neon-cyan">{filteredAndSortedSymbols.length}</span>
         </span>
       </div>

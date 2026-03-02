@@ -53,6 +53,15 @@ export function SummaryCards({ data }: SummaryCardsProps) {
         subtitle=".text section"
       />
       <SummaryCard
+        title="只读数据段大小"
+        value={formatBytes(
+          data.symbols
+            .filter(s => s.section === '.rodata')
+            .reduce((sum, s) => sum + s.size, 0)
+        )}
+        subtitle=".rodata section"
+      />
+      <SummaryCard
         title="数据段大小"
         value={formatBytes(
           data.symbols

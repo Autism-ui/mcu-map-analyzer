@@ -21,6 +21,7 @@ export function ModuleBarChart({ data, limit = 20 }: ModuleBarChartProps) {
       text: `TOP_${limit}_MODULES`,
       left: 'center'
     },
+    legend: { show: false },
     tooltip: {
       ...darkTechTheme.tooltip,
       trigger: 'axis',
@@ -38,6 +39,7 @@ export function ModuleBarChart({ data, limit = 20 }: ModuleBarChartProps) {
     grid: {
       left: '3%',
       right: '4%',
+      top: 50,
       bottom: '3%',
       containLabel: true
     },

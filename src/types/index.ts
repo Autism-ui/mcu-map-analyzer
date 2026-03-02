@@ -20,6 +20,7 @@ export interface Module {
   textSize: number;
   dataSize: number;
   bssSize: number;
+  rodataSize: number;
 }
 
 export interface ParsedMapData {

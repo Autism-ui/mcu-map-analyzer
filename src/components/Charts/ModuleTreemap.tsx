@@ -8,8 +8,13 @@ interface ModuleTreemapProps {
 }
 
 export function ModuleTreemap({ data }: ModuleTreemapProps) {
-  const treeData = data.modules
+  const allModules = data.modules
     .filter(m => m.totalSize > 0)
+    .sort((a, b) => b.totalSize - a.totalSize)
+
+  // 只保留前 50 个模块，避免过小的模块变成不可辨识的黑色小方块
+  const treeData = allModules
+    .slice(0, 50)
     .map(m => ({
       name: m.name,
       value: m.totalSize
@@ -22,6 +27,7 @@ export function ModuleTreemap({ data }: ModuleTreemapProps) {
       text: 'MODULE_MEMORY_TREEMAP',
       left: 'center'
     },
+    legend: { show: false },
     tooltip: {
       ...darkTechTheme.tooltip,
       formatter: (params: any) => {
@@ -34,18 +40,15 @@ export function ModuleTreemap({ data }: ModuleTreemapProps) {
         type: 'treemap',
         data: treeData,
         leafDepth: 1,
+        roam: false,
+        nodeClick: false,
+        breadcrumb: { show: false },
         label: {
           show: true,
           fontFamily: 'JetBrains Mono, monospace',
           formatter: '{b}',
           color: '#0a0e1a',
-          fontSize: 12
-        },
-        upperLabel: {
-          show: true,
-          height: 30,
-          color: '#00f5ff',
-          fontFamily: 'Orbitron, sans-serif'
+          fontSize: 11
         },
         itemStyle: {
           borderColor: '#0a0e1a',
@@ -63,12 +66,7 @@ export function ModuleTreemap({ data }: ModuleTreemapProps) {
           {
             itemStyle: {
               borderWidth: 0,
-              gapWidth: 5
-            }
-          },
-          {
-            itemStyle: {
-              gapWidth: 1
+              gapWidth: 3
             }
           }
         ]

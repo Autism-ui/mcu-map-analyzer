@@ -63,65 +63,81 @@ export function SymbolTable({ symbols }: SymbolTableProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Search bar */}
       <div className="flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="搜索符号或文件名..."
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value)
-            setCurrentPage(1)
-          }}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <span className="text-sm text-gray-600">
-          共 {filteredAndSortedSymbols.length} 个符号
+        <div className="relative flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="SEARCH: symbol or file name..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setCurrentPage(1)
+            }}
+            className="w-full px-4 py-3 bg-dark-700 border border-tech-border rounded font-mono text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-neon-cyan focus:shadow-neon-cyan transition-all duration-300"
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neon-cyan/50">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+        <span className="text-sm font-mono text-gray-500">
+          TOTAL: <span className="text-neon-cyan">{filteredAndSortedSymbols.length}</span>
         </span>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      {/* Table */}
+      <div className="overflow-x-auto rounded-lg border border-tech-border">
+        <table className="min-w-full divide-y divide-tech-border">
+          <thead className="bg-dark-900/80">
             <tr>
               {[
-                { field: 'name' as SortField, label: '符号名' },
-                { field: 'size' as SortField, label: '大小' },
-                { field: 'address' as SortField, label: '地址' },
-                { field: 'section' as SortField, label: '段' },
-                { field: 'file' as SortField, label: '文件' }
+                { field: 'name' as SortField, label: 'SYMBOL_NAME' },
+                { field: 'size' as SortField, label: 'SIZE' },
+                { field: 'address' as SortField, label: 'ADDRESS' },
+                { field: 'section' as SortField, label: 'SECTION' },
+                { field: 'file' as SortField, label: 'FILE' }
               ].map(({ field, label }) => (
                 <th
                   key={field}
                   onClick={() => handleSort(field)}
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-4 text-left text-xs font-mono font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-neon-cyan transition-colors group"
                 >
-                  {label}
-                  {sortField === field && (
-                    <span className="ml-1">
-                      {sortOrder === 'asc' ? '↑' : '↓'}
-                    </span>
-                  )}
+                  <div className="flex items-center space-x-2">
+                    <span>{label}</span>
+                    {sortField === field && (
+                      <span className="text-neon-cyan">
+                        {sortOrder === 'asc' ? '↑' : '↓'}
+                      </span>
+                    )}
+                  </div>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-dark-800/30 divide-y divide-tech-border">
             {paginatedSymbols.map((symbol, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+              <tr
+                key={index}
+                className="hover:bg-neon-cyan/5 transition-colors group"
+              >
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-300 group-hover:text-neon-cyan transition-colors">
                   {symbol.name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-display text-neon-green">
                   {formatBytes(symbol.size)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
                   {formatHex(symbol.address)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {symbol.section}
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
+                  <span className="px-2 py-1 bg-dark-700 border border-tech-border rounded text-xs">
+                    {symbol.section}
+                  </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500 max-w-xs truncate">
                   {symbol.file}
                 </td>
               </tr>
@@ -130,24 +146,25 @@ export function SymbolTable({ symbols }: SymbolTableProps) {
         </table>
       </div>
 
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center space-x-2">
+        <div className="flex justify-center items-center space-x-4">
           <button
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="px-4 py-2 bg-dark-700 border border-tech-border rounded font-mono text-sm text-gray-400 hover:text-neon-cyan hover:border-neon-cyan disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300"
           >
-            上一页
+            PREV
           </button>
-          <span className="text-sm text-gray-600">
-            第 {currentPage} / {totalPages} 页
+          <span className="text-sm font-mono text-gray-500">
+            PAGE <span className="text-neon-cyan">{currentPage}</span> / {totalPages}
           </span>
           <button
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="px-4 py-2 bg-dark-700 border border-tech-border rounded font-mono text-sm text-gray-400 hover:text-neon-cyan hover:border-neon-cyan disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300"
           >
-            下一页
+            NEXT
           </button>
         </div>
       )}
